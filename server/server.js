@@ -20,15 +20,15 @@ io.on('connection', (socket)=>{
     //socket.broadcast.emit from admin - New User joined
     socket.broadcast.emit('newMessage',generateMessage('Admin','New User Joined'));
 
-    socket.on('createMessage',(message)=>{
+    socket.on('createMessage',(message, callback)=>{
         console.log('createMessage'+ JSON.stringify(message));
         io.emit('newMessage',generateMessage(message.from,message.text));
-
+        callback('This is from the server side');
         // socket.broadcast.emit('newMessage',{
         //     from :message.from,
         //     text:message.text,
         //     createdAt: new Date().getTime()
-        // })
+        // });
        
     }); 
 
