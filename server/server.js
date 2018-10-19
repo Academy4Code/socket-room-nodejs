@@ -1,5 +1,6 @@
 const  path  = require('path');
 const  http  = require('http');
+const {generateMessage} = require('./utils/message')
 const  express  = require('express');
 const  socketIO  = require('socket.io');
 
@@ -13,16 +14,22 @@ app.use(express.static(publicPath));
 io.on('connection', (socket)=>{
     console.log('New user Connected');
 
-    socket.on('createMessage',(newEmail)=>{
-        console.log('createMessage'+ JSON.stringify(newEmail));
+    //socket.emit from Admin --> Welcome to chat app
+    socket.emit('newMessage',generateMessage('Admin','Welcome to app chat'));
 
-        io.emit('newMessage',{
-            from:newEmail.from,
-            text :newEmail.text,
-            createdAt:new Date().getTime()
-        });
-    
-        
+    //socket.broadcast.emit from admin - New User joined
+    socket.broadcast.emit('newMessage',generateMessage('Admin','New User Joined'));
+
+    socket.on('createMessage',(message)=>{
+        console.log('createMessage'+ JSON.stringify(message));
+        io.emit('newMessage',generateMessage(message.from,message.text));
+
+        // socket.broadcast.emit('newMessage',{
+        //     from :message.from,
+        //     text:message.text,
+        //     createdAt: new Date().getTime()
+        // })
+       
     }); 
 
     socket.on('disconnect',()=>{
