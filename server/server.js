@@ -1,6 +1,6 @@
 const  path  = require('path');
 const  http  = require('http');
-const {generateMessage} = require('./utils/message')
+const {generateMessage,generateLocationMessage} = require('./utils/message')
 const  express  = require('express');
 const  socketIO  = require('socket.io');
 
@@ -24,14 +24,13 @@ io.on('connection', (socket)=>{
         console.log('createMessage'+ JSON.stringify(message));
         io.emit('newMessage',generateMessage(message.from,message.text));
         callback('This is from the server side');
-        // socket.broadcast.emit('newMessage',{
-        //     from :message.from,
-        //     text:message.text,
-        //     createdAt: new Date().getTime()
-        // });
        
     }); 
 
+    socket.on('createLocationMessage',(cords)=>{
+        io.emit('newLocationMessage',generateLocationMessage('Admin',cords.latitude, cords.longitude));
+        
+    });
     socket.on('disconnect',()=>{
         console.log('disconnected to server');
         
